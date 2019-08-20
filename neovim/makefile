@@ -10,4 +10,5 @@ config:
 clean:
 	sed -i 's|source $(CURDIR)/init.vim||' $(INSTALL_DIR)/init.vim
 install: mkdir clean config
-	vim +PlugInstall +qall
+	nvim +PlugInstall +UpdateRemotePlugins +qa
+	
