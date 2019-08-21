@@ -188,6 +188,7 @@ let g:deoplete#enable_at_startup = 1
 syntax on
 set ruler
 set number
+set relativenumber
 
 let no_buffers_menu=1
 silent! colorscheme molokai
@@ -514,6 +515,9 @@ let python_highlight_all = 1
 " rust
 
 let g:rustfmt_autosave = 1
+
+" Automatically start language servers.	
+let g:LanguageClient_autoStart = 1
 
 let g:LanguageClient_serverCommands = {
     \ 'rust': ['rustup', 'run', 'nightly', 'rls'],
