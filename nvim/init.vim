@@ -25,8 +25,8 @@ call plug#begin(expand('~/.config/nvim/plugged'))
     Plug 'stephpy/vim-yaml'
     Plug 'rust-lang/rust.vim'
     Plug 'othree/html5.vim'
-    Plugin 'godlygeek/tabular' " Required by vim-markdown
-    Plugin 'plasticboy/vim-markdown'
+    Plug 'godlygeek/tabular' " Required by vim-markdown
+    Plug 'plasticboy/vim-markdown'
 call plug#end()
 
 " ===================== General Settings =====================
@@ -49,6 +49,8 @@ set pumheight=15
 set splitright
 set splitbelow
 set mouse=a
+
+set signcolumn=yes
 
 
 set smartcase
@@ -118,6 +120,11 @@ map L $
 " Move by line (include wrap line)
 nnoremap j gj
 nnoremap k gk
+
+" Quick save
+nnoremap <C-s> :w<CR>
+
+nnoremap <leader>w <C-^>
 " ===================== Custom Mappings =====================
 
 
