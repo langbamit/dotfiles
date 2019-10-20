@@ -9,20 +9,24 @@ call plug#begin(expand('~/.config/nvim/plugged'))
     Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
     Plug 'junegunn/fzf.vim'
 
-    Plug 'scrooloose/nerdtree'
     Plug 'itchyny/lightline.vim'
 
     Plug 'neoclide/coc.nvim', {'branch': 'release'}
 
-    Plug 'sheerun/vim-polyglot'
-    Plug 'rust-lang/rust.vim'
-    Plug 'othree/html5.vim'
 
     Plug 'jiangmiao/auto-pairs'
 
     Plug 'liuchengxu/vista.vim'
 
     Plug 'drewtempelmeyer/palenight.vim'
+
+    Plug 'sheerun/vim-polyglot'
+    Plug 'cespare/vim-toml'
+    Plug 'stephpy/vim-yaml'
+    Plug 'rust-lang/rust.vim'
+    Plug 'othree/html5.vim'
+    Plugin 'godlygeek/tabular' " Required by vim-markdown
+    Plugin 'plasticboy/vim-markdown'
 call plug#end()
 
 " ===================== General Settings =====================
@@ -44,9 +48,11 @@ set laststatus=2
 set pumheight=15
 set splitright
 set splitbelow
+set mouse=a
+
+
 set smartcase
 set ignorecase
-set mouse=a
 
 set breakindent
 set smartindent
@@ -98,27 +104,34 @@ augroup coccmd
   " Update signature help on jump placeholder
   autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
 augroup end
-" ===================== Custom Mappings =====================
-
+" ===================== Keyboard shortcuts =====================
 "" Switching windows
 noremap <C-j> <C-w>j
 noremap <C-k> <C-w>k
 noremap <C-l> <C-w>l
 noremap <C-h> <C-w>h
 
+"Jump to start and end of line using the home row keys
+map H ^
+map L $
+
+" Move by line (include wrap line)
+nnoremap j gj
+nnoremap k gk
+" ===================== Custom Mappings =====================
+
+
 " Comment map
 nmap <Leader>c gcc
 " Line comment command
 xmap <Leader>c gc
 
-nnoremap <silent> <F2> :NERDTreeFind<CR>
-nnoremap <silent> <F3> :NERDTreeToggle<CR>
-nnoremap <leader>. :lcd %:p:h<CR>
 
 cnoremap <C-P> <C-R>=expand("%:p:h") . "/" <CR>
 nnoremap <silent> <leader>b :Buffers<CR>
-nnoremap <silent> <leader>e :FZF -m<CR>
+nnoremap <silent> <C-p> :FZF -m<CR>
 
+nnoremap <leader>e :e <C-R>=expand("%:p:h") . "/" <CR>
 " Use tab for trigger completion with characters ahead and navigate.
 inoremap <silent><expr> <TAB>
       \ pumvisible() ? "\<C-n>" :
