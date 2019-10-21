@@ -41,6 +41,7 @@ set hidden
 set number
 set modeline
 set modelines=10
+set cmdheight=2
 set updatetime=300
 set relativenumber
 set background=dark
@@ -72,6 +73,13 @@ set tabstop=4
 set softtabstop=0
 set shiftwidth=4
 set expandtab
+
+" Wrapping options
+set formatoptions=tc " wrap text and comments using textwidth
+set formatoptions+=r " continue comments when pressing ENTER in I mode
+set formatoptions+=q " enable formatting of comments with gq
+set formatoptions+=n " detect lists for formatting
+set formatoptions+=b " auto-wrap in insert mode, and do not wrap old long lines
 
 colorscheme palenight
 
@@ -125,6 +133,18 @@ nnoremap k gk
 nnoremap <C-s> :w<CR>
 
 nnoremap <leader>w <C-^>
+
+" Search results centered please
+nnoremap <silent> n nzz
+nnoremap <silent> N Nzz
+nnoremap <silent> * *zz
+nnoremap <silent> # #zz
+nnoremap <silent> g* g*zz
+
+" Very magic by default
+nnoremap ? ?\v
+nnoremap / /\v
+cnoremap %s/ %sm/
 " ===================== Custom Mappings =====================
 
 
