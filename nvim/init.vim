@@ -42,6 +42,7 @@ set number
 set modeline
 set modelines=10
 set cmdheight=2
+set scrolloff=2
 set updatetime=300
 set relativenumber
 set background=dark
@@ -60,7 +61,7 @@ set ignorecase
 set breakindent
 set smartindent
 set nofoldenable
-" set colorcolumn=80
+set colorcolumn=80
 set foldmethod=syntax
 
 "Turn off swap files
@@ -115,6 +116,18 @@ augroup coccmd
   autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
 augroup end
 " ===================== Keyboard shortcuts =====================
+
+cnoreabbrev W! w!
+cnoreabbrev Q! q!
+cnoreabbrev Qall! qall!
+cnoreabbrev Wq wq
+cnoreabbrev Wa wa
+cnoreabbrev wQ wq
+cnoreabbrev WQ wq
+cnoreabbrev W w
+cnoreabbrev Q q
+cnoreabbrev Qall qall
+
 "" Switching windows
 noremap <C-j> <C-w>j
 noremap <C-k> <C-w>k
@@ -211,20 +224,6 @@ omap af <Plug>(coc-funcobj-a)
 " Use <C-d> for select selections ranges, needs server support, like: coc-tsserver, coc-python
 nmap <silent> <C-d> <Plug>(coc-range-select)
 xmap <silent> <C-d> <Plug>(coc-range-select)
-
-" ===================== Abbreviations =====================
-
-cnoreabbrev W! w!
-cnoreabbrev Q! q!
-cnoreabbrev Qall! qall!
-cnoreabbrev Wq wq
-cnoreabbrev Wa wa
-cnoreabbrev wQ wq
-cnoreabbrev WQ wq
-cnoreabbrev W w
-cnoreabbrev Q q
-cnoreabbrev Qall qall
-
 
 " ===================== Functions =====================
 
