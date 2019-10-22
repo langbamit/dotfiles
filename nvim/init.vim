@@ -19,6 +19,7 @@ call plug#begin(expand('~/.config/nvim/plugged'))
     Plug 'liuchengxu/vista.vim'
 
     Plug 'drewtempelmeyer/palenight.vim'
+    Plug 'airblade/vim-rooter'
 
     Plug 'sheerun/vim-polyglot'
     Plug 'cespare/vim-toml'
@@ -87,8 +88,10 @@ colorscheme palenight
 set wildmode=list:longest,list:full
 set wildignore+=*.o,*.obj,.git,*.rbc,*.pyc,__pycache__
 
-set grepprg=rg\ --vimgrep
-
+if executable("rg")
+    set grepprg=rg\ --vimgrep\ --no-heading
+    set grepformat=%f:%l:%c:%m,%f:%l:%m
+endif
 " ===================== [Auto] Cmd =====================
 " Auto remove trailing spaces
 autocmd BufWritePre * %s/\s\+$//e
