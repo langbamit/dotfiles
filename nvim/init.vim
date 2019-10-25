@@ -1,5 +1,7 @@
 " ===================== Plugins =====================
 call plug#begin(expand('~/.config/nvim/plugged'))
+    Plug 'scrooloose/nerdtree'
+
     Plug 'airblade/vim-gitgutter'
     Plug 'tpope/vim-fugitive'
 
@@ -10,13 +12,17 @@ call plug#begin(expand('~/.config/nvim/plugged'))
     Plug 'junegunn/fzf.vim'
 
     Plug 'itchyny/lightline.vim'
+    Plug 'machakann/vim-highlightedyank'
+    Plug 'andymass/vim-matchup'
 
     Plug 'neoclide/coc.nvim', {'branch': 'release'}
 
 
-    Plug 'jiangmiao/auto-pairs'
+    " Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+
 
     Plug 'liuchengxu/vista.vim'
+    Plug 'norcalli/nvim-colorizer.lua'
 
     Plug 'drewtempelmeyer/palenight.vim'
     Plug 'airblade/vim-rooter'
@@ -54,10 +60,17 @@ set splitbelow
 set mouse=a
 
 set signcolumn=yes
+set termguicolors
 
 
 set smartcase
 set ignorecase
+
+set ttyfast
+set lazyredraw
+set regexpengine=1
+set synmaxcol=500
+
 
 set breakindent
 set smartindent
@@ -83,6 +96,10 @@ set formatoptions+=q " enable formatting of comments with gq
 set formatoptions+=n " detect lists for formatting
 set formatoptions+=b " auto-wrap in insert mode, and do not wrap old long lines
 
+set nolist
+set listchars=nbsp:¬,extends:»,precedes:«,trail:•
+
+
 colorscheme palenight
 
 set wildmode=list:longest,list:full
@@ -92,6 +109,8 @@ if executable("rg")
     set grepprg=rg\ --vimgrep\ --no-heading
     set grepformat=%f:%l:%c:%m,%f:%l:%m
 endif
+
+lua require'colorizer'.setup()
 " ===================== [Auto] Cmd =====================
 " Auto remove trailing spaces
 autocmd BufWritePre * %s/\s\+$//e
@@ -105,10 +124,10 @@ command! -bang -nargs=* Find call fzf#vim#grep('rg --column --line-number --no-h
 command! -nargs=0 Format :call CocAction('format')
 
 " Use `:Fold` to fold current buffer
-command! -nargs=? Fold :call     CocAction('fold', <f-args>)
+command! -nargs=? Fold :call CocAction('fold', <f-args>)
 
 " use `:OR` for organize import of current buffer
-command! -nargs=0 OR   :call     CocAction('runCommand', 'editor.action.organizeImport')
+command! -nargs=0 OR :call CocAction('runCommand', 'editor.action.organizeImport')
 
 
 augroup coccmd
@@ -137,6 +156,10 @@ noremap <C-k> <C-w>k
 noremap <C-l> <C-w>l
 noremap <C-h> <C-w>h
 
+" Left and right can switch buffers
+nnoremap <left> :bp<CR>
+nnoremap <right> :bn<CR>
+
 "Jump to start and end of line using the home row keys
 map H ^
 map L $
@@ -161,14 +184,21 @@ nnoremap <silent> g* g*zz
 nnoremap ? ?\v
 nnoremap / /\v
 cnoremap %s/ %sm/
-" ===================== Custom Mappings =====================
-
 
 " Comment map
 nmap <Leader>c gcc
 " Line comment command
 xmap <Leader>c gc
 
+
+nnoremap <silent> <F2> :NERDTreeFind<CR>
+nnoremap <silent> <F3> :NERDTreeToggle<CR>
+nnoremap <leader>. :lcd %:p:h<CR>
+
+
+nnoremap <F6> :Vista!!<CR>
+
+nnoremap <leader>h :set invlist<CR>
 
 cnoremap <C-P> <C-R>=expand("%:p:h") . "/" <CR>
 nnoremap <silent> <leader>b :Buffers<CR>
@@ -243,17 +273,54 @@ function! s:show_documentation()
   endif
 endfunction
 
+function! CocCurrentFunction()
+    return get(b:, 'coc_current_function', '')
+endfunction
 
-" ===================== Variables =====================
+function! FloatingFZF()
+  let buf = nvim_create_buf(v:false, v:true)
+  call setbufvar(buf, '&signcolumn', 'no')
 
-let g:lightline = {
-        \ 'colorscheme': 'palenight',
+  let height = float2nr(23)
+  let width = float2nr(80)
+  let horizontal = float2nr((&columns - width) / 2)
+  let vertical = 1
+
+  let opts = {
+        \ 'relative': 'editor',
+        \ 'row': vertical,
+        \ 'col': horizontal,
+        \ 'width': width,
+        \ 'height': height,
+        \ 'style': 'minimal'
         \ }
 
+  call nvim_open_win(buf, v:true, opts)
+endfunction
+
+
+" ===================== Variables =====================
+let g:vista_icon_indent = ["╰─▸ ", "├─▸ "]
+let g:vista_fzf_preview = []
+" let g:vista_executive_for = {
+"   \ 'cpp': 'vim_lsp',
+"   \ 'php': 'vim_lsp',
+"   \ }
+let g:lightline = {
+      \ 'colorscheme': 'palenight',
+      \ 'active': {
+      \   'left': [ [ 'mode', 'paste' ],
+      \             [ 'cocstatus', 'currentfunction', 'readonly', 'filename', 'modified' ] ]
+      \ },
+      \ 'component_function': {
+      \   'cocstatus': 'coc#status',
+      \   'currentfunction': 'CocCurrentFunction'
+      \ },
+      \ }
+
 let $FZF_DEFAULT_COMMAND = 'rg --files --hidden --follow --glob "!.git/*"'
+let $FZF_DEFAULT_OPTS=' --color=fg:15,bg:#3E4452,hl:1,fg+:#B3BAC9,bg+:0,hl+:1,info:10,prompt:0,pointer:12,marker:4,spinner:11,header:-1,gutter:#3E4452 --layout=reverse  --margin=1,4'
+let g:fzf_layout = { 'window': 'call FloatingFZF()' }
 
-
-" Add status line support, for integration with other plugin, checkout `:h coc-status`
-set statusline^=%{coc#status()}%{get(b:,'coc_current_function','')}%{NearestMethodOrFunction()}
-
+let g:rooter_manual_only = 1
 
