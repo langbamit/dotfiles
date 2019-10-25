@@ -319,8 +319,21 @@ let g:lightline = {
       \ }
 
 let $FZF_DEFAULT_COMMAND = 'rg --files --hidden --follow --glob "!.git/*"'
-let $FZF_DEFAULT_OPTS=' --color=fg:15,bg:#3E4452,hl:1,fg+:#B3BAC9,bg+:0,hl+:1,info:10,prompt:0,pointer:12,marker:4,spinner:11,header:-1,gutter:#3E4452 --layout=reverse  --margin=1,4'
+let $FZF_DEFAULT_OPTS='--reverse --color=bg:#3E4452,gutter:#3E4452 --margin=1,4'
 let g:fzf_layout = { 'window': 'call FloatingFZF()' }
+let g:fzf_colors =
+\ { 'fg':      ['fg', 'Normal'],
+  \ 'hl':      ['fg', 'Comment'],
+  \ 'fg+':     ['fg', 'CursorLine', 'CursorColumn', 'Normal'],
+  \ 'bg+':     ['bg', 'CursorLine', 'CursorColumn'],
+  \ 'hl+':     ['fg', 'Statement'],
+  \ 'info':    ['fg', 'PreProc'],
+  \ 'border':  ['fg', 'Ignore'],
+  \ 'prompt':  ['fg', 'Conditional'],
+  \ 'pointer': ['fg', 'Exception'],
+  \ 'marker':  ['fg', 'Keyword'],
+  \ 'spinner': ['fg', 'Label'],
+  \ 'header':  ['fg', 'Comment'] }
 
 let g:rooter_manual_only = 1
 
