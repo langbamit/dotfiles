@@ -1,12 +1,13 @@
 " ===================== Plugins =====================
 call plug#begin(expand('~/.config/nvim/plugged'))
     Plug 'scrooloose/nerdtree'
-
-    Plug 'airblade/vim-gitgutter'
-    Plug 'tpope/vim-fugitive'
+    Plug 'editorconfig/editorconfig-vim'
 
     Plug 'tpope/vim-surround'
     Plug 'tpope/vim-commentary'
+
+    Plug 'airblade/vim-gitgutter'
+    Plug 'tpope/vim-fugitive'
 
     Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
     Plug 'junegunn/fzf.vim'
@@ -16,10 +17,6 @@ call plug#begin(expand('~/.config/nvim/plugged'))
     Plug 'andymass/vim-matchup'
 
     Plug 'neoclide/coc.nvim', {'branch': 'release'}
-
-
-    " Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
-
 
     Plug 'liuchengxu/vista.vim'
     Plug 'norcalli/nvim-colorizer.lua'
@@ -37,7 +34,7 @@ call plug#begin(expand('~/.config/nvim/plugged'))
 call plug#end()
 
 " ===================== General Settings =====================
-let mapleader=','
+let mapleader=' '
 filetype plugin indent on
 syntax on
 
@@ -71,6 +68,10 @@ set lazyredraw
 set regexpengine=1
 set synmaxcol=500
 
+set undofile
+set undodir=~/.vimdid
+set undolevels=1000
+set undoreload=10000
 
 set breakindent
 set smartindent
@@ -150,6 +151,8 @@ cnoreabbrev W w
 cnoreabbrev Q q
 cnoreabbrev Qall qall
 
+nnoremap <Space> <Nop>
+
 "" Switching windows
 noremap <C-j> <C-w>j
 noremap <C-k> <C-w>k
@@ -202,6 +205,7 @@ nnoremap <leader>h :set invlist<CR>
 
 cnoremap <C-P> <C-R>=expand("%:p:h") . "/" <CR>
 nnoremap <silent> <leader>b :Buffers<CR>
+
 nnoremap <silent> <C-p> :FZF -m<CR>
 
 nnoremap <leader>e :e <C-R>=expand("%:p:h") . "/" <CR>
@@ -223,10 +227,10 @@ nmap <silent> [g <Plug>(coc-diagnostic-prev)
 nmap <silent> ]g <Plug>(coc-diagnostic-next)
 
 " Remap keys for gotos
-nmap <silent> gd <Plug>(coc-definition)
-nmap <silent> gy <Plug>(coc-type-definition)
-nmap <silent> gi <Plug>(coc-implementation)
-nmap <silent> gr <Plug>(coc-references)
+" nmap <silent> gd <Plug>(coc-definition)
+" nmap <silent> gy <Plug>(coc-type-definition)
+" nmap <silent> gi <Plug>(coc-implementation)
+" nmap <silent> gr <Plug>(coc-references)
 
 " Use K to show documentation in preview window
 nnoremap <silent> K :call <SID>show_documentation()<CR>
