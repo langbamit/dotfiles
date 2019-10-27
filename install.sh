@@ -1,0 +1,67 @@
+#!/usr/bin/env sh
+SRC_DIR := $(CURDIR)
+
+read -r option
+
+case $option in
+
+"1")
+    echo -e "\u001b[7m Installing oh-my-zsh...\u001b[0m"
+    sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
+    ;;
+
+"2")echo -e "\u001b[7m Installing zsh plugins...\u001b[0m"
+    git clone https://github.com/romkatv/powerlevel10k.git ~/.oh-my-zsh/custom/themes/powerlevel10k
+    git clone https://github.com/zsh-users/zsh-autosuggestions ~/.oh-my-zsh/custom/plugins/zsh-autosuggestions
+    git clone https://github.com/zdharma/fast-syntax-highlighting.git ~/.oh-my-zsh/custom/plugins/fast-syntax-highlighting
+    git clone https://github.com/djui/alias-tips.git ~/.oh-my-zsh/custom/plugins/alias-tips
+    ;;
+
+"3")echo -e "\u001b[7m Installing vim plugins... \u001b[0m"
+    git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
+    vim +PluginUpdate +qall
+    ;;
+
+"4")echo -e "\u001b[7m Installing tmux plugins... \u001b[0m"
+    git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+    tmux start-server
+    tmux new-session -d
+    ~/.tmux/plugins/tpm/scripts/install_plugins.sh
+    tmux kill-server
+    ;;
+
+"5")echo -e "\u001b[7m Setting up symlinks... \u001b[0m"
+    echo -e "\u001b[33;1m Backing up existing files... \u001b[0m"
+    mv -iv ~/.Xresources ~/.Xresources.old
+    mv -iv ~/.config/i3 ~/.config/i3.old
+    mv -iv ~/.config/i3status ~/.config/i3status.old
+    mv -iv ~/.config/libinput-gestures.conf ~/.config/libinput-gestures.conf.old
+    mv -iv ~/.config/ranger ~/.config/ranger.old
+    mv -iv ~/.dmenurc ~/.dmenurc.old
+    mv -iv ~/.gitconfig ~/.gitconfig.old
+    mv -iv ~/.tmux.conf ~/.tmux.conf.old
+    mv -iv ~/.vimrc ~/.vimrc.old
+    mv -iv ~/.zshrc ~/.zshrc.old
+
+    echo -e "\u001b[36;1m Adding symlinks...\u001b[0m"
+    ln -sfnv "$PWD/.Xresources" ~/.Xresources
+    ln -sfnv "$PWD/.config/i3" ~/.config/i3
+    ln -sfnv "$PWD/.config/ranger/" ~/.config/ranger
+    ln -sfnv "$PWD/.gitconfig" ~/.gitconfig
+    ln -sfnv "$PWD/.tmux.conf" ~/.tmux.conf
+    ln -sfnv "$PWD/.config/nvim" ~/.config/nvim
+    ln -sfnv "$PWD/.zshrc" ~/.zshrc
+
+    echo -e "\u001b[36;1m Remove backups with 'rm -ir ~/.*.old && rm -ir ~/.config/*.old'. \u001b[0m"
+    ;;
+
+"0")echo -e "\u001b[32;1m Bye! \u001b[0m"
+    exit 0
+    ;;
+
+*)echo -e "\u001b[31;1m Invalid option entered! \u001b[0m"
+    exit 1
+    ;;
+esac
+
+exit 0
