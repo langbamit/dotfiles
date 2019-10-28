@@ -45,6 +45,9 @@ export PURE_PROMPT_VICMD_SYMBOL='◀'
 zplugin ice pick"async.zsh" src"pure.zsh"
 zplugin light sindresorhus/pure
 
+export VM_LAZY_LOAD=true
+zplugin light lukechilds/zsh-nvm
+
 #zplug denysdovhan/spaceship-prompt, use:spaceship.zsh, from:github, as:theme
 
 
