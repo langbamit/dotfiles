@@ -48,10 +48,6 @@ zplugin light sindresorhus/pure
 export VM_LAZY_LOAD=true
 zplugin light lukechilds/zsh-nvm
 
-#zplug denysdovhan/spaceship-prompt, use:spaceship.zsh, from:github, as:theme
-
-
-
 
 # Key Bindings
 [[ -n ${key[Up]} ]] && bindkey "${key[Up]}" up-line-or-search
