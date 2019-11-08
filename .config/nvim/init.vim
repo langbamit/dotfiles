@@ -17,6 +17,7 @@ call plug#begin(expand('~/.config/nvim/plugged'))
     Plug 'andymass/vim-matchup'
 
     Plug 'neoclide/coc.nvim', {'branch': 'release'}
+    Plug 'dense-analysis/ale'
 
     Plug 'liuchengxu/vista.vim'
     Plug 'norcalli/nvim-colorizer.lua'
@@ -25,6 +26,7 @@ call plug#begin(expand('~/.config/nvim/plugged'))
     Plug 'airblade/vim-rooter'
 
     Plug 'sheerun/vim-polyglot'
+    Plug 'evanleck/vim-svelte'
     Plug 'cespare/vim-toml'
     Plug 'stephpy/vim-yaml'
     Plug 'rust-lang/rust.vim'
@@ -206,9 +208,15 @@ nnoremap <leader>h :set invlist<CR>
 cnoremap <C-P> <C-R>=expand("%:p:h") . "/" <CR>
 nnoremap <silent> <leader>b :Buffers<CR>
 
-nnoremap <silent> <C-p> :FZF -m<CR>
+nnoremap <silent> <C-p> :Files <CR>
 
 nnoremap <leader>e :e <C-R>=expand("%:p:h") . "/" <CR>
+
+nnoremap <silent> <C-T> :call ToggleFloatTerm()<CR>
+tnoremap <silent> <C-T> <C-\><C-n>:call ToggleFloatTerm()<CR>
+
+
+
 " Use tab for trigger completion with characters ahead and navigate.
 inoremap <silent><expr> <TAB>
       \ pumvisible() ? "\<C-n>" :
@@ -302,6 +310,76 @@ function! FloatingFZF()
   call nvim_open_win(buf, v:true, opts)
 endfunction
 
+function! ToggleFloatTerm()
+    let found = s:findTerminalWindow()
+    if found > 0
+      if &buftype == 'terminal'
+        execute found . ' wincmd q'
+      else
+        execute found . ' wincmd w'
+      endif
+    else
+      call OpenFloatTerm()
+    endif
+endfunction
+let s:term_w_buf = 0
+function! OnCloseFloatTerm()
+  " call nvim_win_close(s:term_b_win, v:true)
+  let s:term_w_buf = 0
+endfunction
+
+function! OpenFloatTerm()
+
+  let height = float2nr((&lines - 2) / 1.5)
+  let row = float2nr((&lines - height) / 2)
+  let width = float2nr(&columns / 1.5)
+  let col = float2nr((&columns - width) / 2)
+  set colorcolumn=
+  " " Border Window
+  " let border_opts = {
+  "   \ 'relative': 'editor',
+  "   \ 'row': row - 1,
+  "   \ 'col': col - 2,
+  "   \ 'width': width + 4,
+  "   \ 'height': height + 2,
+  "   \ 'style': 'minimal'
+  "   \ }
+  " let s:term_b_buf = nvim_create_buf(v:false, v:true)
+  " let s:term_b_win = nvim_open_win(s:term_b_buf, v:true, border_opts)
+  " call setbufvar(bufnr('%'), 'floaterm_window', 1)
+  " Main Window
+  let opts = {
+    \ 'relative': 'editor',
+    \ 'row': row,
+    \ 'col': col,
+    \ 'width': width,
+    \ 'height': height,
+    \ 'style': 'minimal'
+    \ }
+  if s:term_w_buf > 0
+    call nvim_open_win(s:term_w_buf, v:true, opts)
+    return
+  endif
+  let s:term_w_buf = nvim_create_buf(v:false, v:true)
+  let s:term_w_win = nvim_open_win(s:term_w_buf, v:true, opts)
+  terminal
+  startinsert
+  call setbufvar(bufnr('%'), 'floaterm_window', 1)
+  " Hook up TermClose event to close both terminal and border windows
+  autocmd TermClose * ++once :q | call OnCloseFloatTerm()
+endfunction
+
+function! s:findTerminalWindow()
+  let found_winnr = 0
+  for winnr in range(1, winnr('$'))
+    if getbufvar(winbufnr(winnr), '&buftype') == 'terminal'
+      \ && getbufvar(winbufnr(winnr), 'floaterm_window') == 1
+      let found_winnr = winnr
+    endif
+  endfor
+  return found_winnr
+endfunction
+
 
 " ===================== Variables =====================
 let g:vista_icon_indent = ["╰─▸ ", "├─▸ "]
@@ -322,7 +400,7 @@ let g:lightline = {
       \ },
       \ }
 
-let $FZF_DEFAULT_COMMAND = 'rg --files --hidden --follow --glob "!.git/*"'
+let $FZF_DEFAULT_COMMAND = 'rg --files --hidden --follow --glob "!/{.git,node_modules}/*" --glob "!*/{.git,node_modules}/*"'
 let $FZF_DEFAULT_OPTS='--reverse --color=bg:#3E4452,gutter:#3E4452 --margin=1,4'
 let g:fzf_layout = { 'window': 'call FloatingFZF()' }
 let g:fzf_colors =
@@ -341,3 +419,4 @@ let g:fzf_colors =
 
 let g:rooter_manual_only = 1
 
+let g:EditorConfig_exclude_patterns = ['fugitive://.\*', 'scp://.\*']
