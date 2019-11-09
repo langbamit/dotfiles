@@ -212,8 +212,8 @@ nnoremap <silent> <C-p> :Files <CR>
 
 nnoremap <leader>e :e <C-R>=expand("%:p:h") . "/" <CR>
 
-nnoremap <silent> <C-T> :call ToggleFloatTerm()<CR>
-tnoremap <silent> <C-T> <C-\><C-n>:call ToggleFloatTerm()<CR>
+nnoremap <silent> <leader>t :call ToggleFloatTerm()<CR>
+tnoremap <silent> <leader>t <C-\><C-n>:call ToggleFloatTerm()<CR>
 
 
 
@@ -315,16 +315,22 @@ function! ToggleFloatTerm()
     if found > 0
       if &buftype == 'terminal'
         execute found . ' wincmd q'
+        execute bufwinnr(s:term_b_buf) . ' wincmd q'
       else
         execute found . ' wincmd w'
       endif
     else
       call OpenFloatTerm()
+      setlocal colorcolumn=
+      setlocal nobuflisted
+
     endif
 endfunction
+let s:term_b_buf = 0
 let s:term_w_buf = 0
 function! OnCloseFloatTerm()
-  " call nvim_win_close(s:term_b_win, v:true)
+  call nvim_win_close(s:term_b_win, v:true)
+  let s:term_b_buf = 0
   let s:term_w_buf = 0
 endfunction
 
@@ -334,19 +340,20 @@ function! OpenFloatTerm()
   let row = float2nr((&lines - height) / 2)
   let width = float2nr(&columns / 1.5)
   let col = float2nr((&columns - width) / 2)
-  set colorcolumn=
   " " Border Window
-  " let border_opts = {
-  "   \ 'relative': 'editor',
-  "   \ 'row': row - 1,
-  "   \ 'col': col - 2,
-  "   \ 'width': width + 4,
-  "   \ 'height': height + 2,
-  "   \ 'style': 'minimal'
-  "   \ }
-  " let s:term_b_buf = nvim_create_buf(v:false, v:true)
-  " let s:term_b_win = nvim_open_win(s:term_b_buf, v:true, border_opts)
-  " call setbufvar(bufnr('%'), 'floaterm_window', 1)
+  let border_opts = {
+    \ 'relative': 'editor',
+    \ 'row': row - 1,
+    \ 'col': col - 2,
+    \ 'width': width + 4,
+    \ 'height': height + 2,
+    \ 'style': 'minimal'
+    \ }
+  let s:term_b_buf = nvim_create_buf(v:false, v:true)
+  let s:term_b_win = nvim_open_win(s:term_b_buf, v:true, border_opts)
+  call setbufvar(bufnr('%'), 'floaterm_window_border', 1)
+  setlocal colorcolumn=
+  setlocal nobuflisted
   " Main Window
   let opts = {
     \ 'relative': 'editor',
@@ -366,7 +373,7 @@ function! OpenFloatTerm()
   startinsert
   call setbufvar(bufnr('%'), 'floaterm_window', 1)
   " Hook up TermClose event to close both terminal and border windows
-  autocmd TermClose * ++once :q | call OnCloseFloatTerm()
+  autocmd TermClose * ++once :q! | call OnCloseFloatTerm()
 endfunction
 
 function! s:findTerminalWindow()
