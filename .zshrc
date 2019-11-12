@@ -63,3 +63,5 @@ alias mv='mv -i'
 alias ln='ln -i'
 
 
+
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh

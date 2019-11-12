@@ -24,6 +24,7 @@ call plug#begin(expand('~/.config/nvim/plugged'))
 
     Plug 'drewtempelmeyer/palenight.vim'
     Plug 'airblade/vim-rooter'
+    Plug 'langbamit/vim-termfloating'
 
     Plug 'sheerun/vim-polyglot'
     Plug 'evanleck/vim-svelte'
@@ -212,8 +213,8 @@ nnoremap <silent> <C-p> :Files <CR>
 
 nnoremap <leader>e :e <C-R>=expand("%:p:h") . "/" <CR>
 
-nnoremap <silent> <leader>t :call ToggleFloatTerm()<CR>
-tnoremap <silent> <leader>t <C-\><C-n>:call ToggleFloatTerm()<CR>
+nnoremap <silent> <leader>t :TermFloatingToggle<CR>
+tnoremap <silent> <leader>t <C-\><C-n>:TermFloatingToggle<CR>
 
 
 
@@ -309,84 +310,6 @@ function! FloatingFZF()
 
   call nvim_open_win(buf, v:true, opts)
 endfunction
-
-function! ToggleFloatTerm()
-    let found = s:findTerminalWindow()
-    if found > 0
-      if &buftype == 'terminal'
-        execute found . ' wincmd q'
-        execute bufwinnr(s:term_b_buf) . ' wincmd q'
-      else
-        execute found . ' wincmd w'
-      endif
-    else
-      call OpenFloatTerm()
-      setlocal colorcolumn=
-      setlocal nobuflisted
-
-    endif
-endfunction
-let s:term_b_buf = 0
-let s:term_w_buf = 0
-function! OnCloseFloatTerm()
-  call nvim_win_close(s:term_b_win, v:true)
-  let s:term_b_buf = 0
-  let s:term_w_buf = 0
-endfunction
-
-function! OpenFloatTerm()
-
-  let height = float2nr((&lines - 2) / 1.5)
-  let row = float2nr((&lines - height) / 2)
-  let width = float2nr(&columns / 1.5)
-  let col = float2nr((&columns - width) / 2)
-  " " Border Window
-  let border_opts = {
-    \ 'relative': 'editor',
-    \ 'row': row - 1,
-    \ 'col': col - 2,
-    \ 'width': width + 4,
-    \ 'height': height + 2,
-    \ 'style': 'minimal'
-    \ }
-  let s:term_b_buf = nvim_create_buf(v:false, v:true)
-  let s:term_b_win = nvim_open_win(s:term_b_buf, v:true, border_opts)
-  call setbufvar(bufnr('%'), 'floaterm_window_border', 1)
-  setlocal colorcolumn=
-  setlocal nobuflisted
-  " Main Window
-  let opts = {
-    \ 'relative': 'editor',
-    \ 'row': row,
-    \ 'col': col,
-    \ 'width': width,
-    \ 'height': height,
-    \ 'style': 'minimal'
-    \ }
-  if s:term_w_buf > 0
-    call nvim_open_win(s:term_w_buf, v:true, opts)
-    return
-  endif
-  let s:term_w_buf = nvim_create_buf(v:false, v:true)
-  let s:term_w_win = nvim_open_win(s:term_w_buf, v:true, opts)
-  terminal
-  startinsert
-  call setbufvar(bufnr('%'), 'floaterm_window', 1)
-  " Hook up TermClose event to close both terminal and border windows
-  autocmd TermClose * ++once :q! | call OnCloseFloatTerm()
-endfunction
-
-function! s:findTerminalWindow()
-  let found_winnr = 0
-  for winnr in range(1, winnr('$'))
-    if getbufvar(winbufnr(winnr), '&buftype') == 'terminal'
-      \ && getbufvar(winbufnr(winnr), 'floaterm_window') == 1
-      let found_winnr = winnr
-    endif
-  endfor
-  return found_winnr
-endfunction
-
 
 " ===================== Variables =====================
 let g:vista_icon_indent = ["╰─▸ ", "├─▸ "]
