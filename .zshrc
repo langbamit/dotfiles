@@ -17,9 +17,22 @@ else
 fi
 
 
+# General
+export EDITOR="nvim"
+export VISUAL="nvim"
+
+setopt HIST_IGNORE_ALL_DUPS
+setopt AUTO_LIST
+setopt EXTENDED_HISTORY
+export HISTSIZE=10000
+export SAVEHIST=10000
+export HISTFILE=${HOME}/.zsh_history
+
 # Plugins
 zplugin ice silent pick"history.zsh"
 zplugin snippet OMZ::lib/history.zsh
+
+zplugin snippet OMZ::plugins/vi-mode/vi-mode.plugin.zsh
 
 zplugin ice silent pick"completion.zsh"
 zplugin snippet OMZ::lib/completion.zsh
@@ -33,7 +46,7 @@ zplugin light zsh-users/zsh-completions
 zplugin snippet OMZ::plugins/extract/extract.plugin.zsh
 zplugin snippet OMZ::plugins/colored-man-pages/colored-man-pages.plugin.zsh
 zplugin snippet OMZ::plugins/command-not-found/command-not-found.plugin.zsh
-zplugin snippet OMZ::plugins/sudo/sudo.plugin.zsh
+# zplugin snippet OMZ::plugins/sudo/sudo.plugin.zsh # May have unexpected behavious when using with vi-mode
 zplugin snippet OMZ::plugins/docker-compose/docker-compose.plugin.zsh
 
 zplugin light zsh-users/zsh-autosuggestions

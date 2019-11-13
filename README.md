@@ -11,5 +11,6 @@ curl -fLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs \
 
 ### Run
 ```
-make
+cp .config/i3/i3-scrot /usr/bin/i3-scrot
+
 ```
