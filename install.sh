@@ -1,25 +1,30 @@
 #!/usr/bin/env sh
-SRC_DIR := $(CURDIR)
+# SRC_DIR := $(PWD)
 
 read -r option
 
 case $option in
 
 "1")
-    echo -e "\u001b[7m Installing oh-my-zsh...\u001b[0m"
-    sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
+    echo -e "\u001b[7m Installing nodenv... \u001b[0m"
+    if ! [[ -d "$HOME/.nodenv" ]]; then
+        
+        git clone https://github.com/nodenv/nodenv.git $HOME/.nodenv
+        cd $HOME/.nodenv && src/configure && make -C src
+        cd $SRC_DIR
+    else
+        echo -e "\u001b[7m Ignore install because nodenv existing. \u001b[0m"
+    fi
     ;;
 
-"2")echo -e "\u001b[7m Installing zsh plugins...\u001b[0m"
-    git clone https://github.com/romkatv/powerlevel10k.git ~/.oh-my-zsh/custom/themes/powerlevel10k
-    git clone https://github.com/zsh-users/zsh-autosuggestions ~/.oh-my-zsh/custom/plugins/zsh-autosuggestions
-    git clone https://github.com/zdharma/fast-syntax-highlighting.git ~/.oh-my-zsh/custom/plugins/fast-syntax-highlighting
-    git clone https://github.com/djui/alias-tips.git ~/.oh-my-zsh/custom/plugins/alias-tips
+"2")
+
     ;;
 
-"3")echo -e "\u001b[7m Installing vim plugins... \u001b[0m"
-    git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
-    vim +PluginUpdate +qall
+"3")
+    echo -e "\u001b[7m Installing vim plugins... \u001b[0m"
+    nvim +PlugUpdate +PlugInstall +qall
+    nvim '+CocInstall coc-json coc-rls coc-tsserver' +qall
     ;;
 
 "4")echo -e "\u001b[7m Installing tmux plugins... \u001b[0m"
@@ -34,13 +39,9 @@ case $option in
     echo -e "\u001b[33;1m Backing up existing files... \u001b[0m"
     mv -iv ~/.Xresources ~/.Xresources.old
     mv -iv ~/.config/i3 ~/.config/i3.old
-    mv -iv ~/.config/i3status ~/.config/i3status.old
-    mv -iv ~/.config/libinput-gestures.conf ~/.config/libinput-gestures.conf.old
     mv -iv ~/.config/ranger ~/.config/ranger.old
-    mv -iv ~/.dmenurc ~/.dmenurc.old
     mv -iv ~/.gitconfig ~/.gitconfig.old
     mv -iv ~/.tmux.conf ~/.tmux.conf.old
-    mv -iv ~/.vimrc ~/.vimrc.old
     mv -iv ~/.zshrc ~/.zshrc.old
 
     echo -e "\u001b[36;1m Adding symlinks...\u001b[0m"
